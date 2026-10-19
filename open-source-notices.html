@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Source Notices · Badminton Analyzer</title>
+<style>
+  :root{--green:#0b6b3f;--ink:#14201a;--muted:#5c6b63;--bg:#f5f8f6;--card:#fff;--line:#e2eae5;--accent:#e7c532;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:840px;margin:0 auto;padding:0 20px 80px;}
+  header{background:linear-gradient(135deg,#083d24,#0b6b3f 55%,#0a8a4e);color:#fff;padding:34px 20px;}
+  header .inner{max-width:840px;margin:0 auto;}
+  h1{font-size:23px;margin:0;}
+  .sub{opacity:.85;font-size:14px;margin-top:4px;}
+  .lang{display:inline-flex;margin-top:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px;}
+  .lang button{border:0;background:transparent;color:#eafaf0;font:inherit;font-size:14px;padding:6px 18px;border-radius:999px;cursor:pointer;}
+  .lang button.active{background:#fff;color:var(--green);font-weight:600;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px;margin-top:20px;box-shadow:0 2px 14px rgba(12,60,38,.05);}
+  h2{font-size:18px;color:var(--green);margin:0 0 10px;}
+  h3{font-size:16px;margin:20px 0 4px;}
+  p{margin:7px 0;}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+  th{background:#eef6f1;}
+  a{color:var(--green);word-break:break-all;}
+  .lic{background:#0b2e1d;color:#e6f2ea;border-radius:10px;padding:14px 16px;}
+  .lic a{color:var(--accent);}
+  details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fafcfb;}
+  summary{cursor:pointer;font-weight:600;color:var(--green);}
+  pre{white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.55;background:#f3f6f4;border-radius:8px;padding:14px;overflow:auto;}
+  .hidden{display:none;}
+  footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:26px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <h1><span data-en>Open Source Notices</span><span data-zh class="hidden">开源许可声明</span></h1>
+    <div class="sub">Badminton Analyzer · <span data-en>Third-party software acknowledgements</span><span data-zh class="hidden">第三方软件致谢</span></div>
+    <div class="lang">
+      <button id="btn-en" onclick="setLang('en')">English</button>
+      <button id="btn-zh" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="en">
+    <div class="card">
+      <h2>Components bundled in the App</h2>
+      <p>The AI models run entirely on-device via Apple Core ML. We are grateful to the following open-source projects.</p>
+      <table>
+        <tr><th>Component</th><th>Used for</th><th>License</th><th>Source</th></tr>
+        <tr>
+          <td><strong>RTMO / MMPose</strong> (OpenMMLab)</td>
+          <td>Real-time multi-person pose estimation (converted to Core ML; weights re-run in our pipeline)</td>
+          <td>Apache License 2.0</td>
+          <td><a href="https://github.com/open-mmlab/mmpose">open-mmlab/mmpose</a></td>
+        </tr>
+        <tr>
+          <td><strong>TrackNetV3</strong></td>
+          <td>Shuttlecock detection / heatmap tracking</td>
+          <td>See upstream (academic release)</td>
+          <td><a href="https://github.com/qaz812345/TrackNetV3">qaz812345/TrackNetV3</a></td>
+        </tr>
+        <tr>
+          <td><strong>Fusion stroke classifier</strong></td>
+          <td>Action classification (serve, smash, clear, drop, etc.)</td>
+          <td>© Theo (proprietary, trained on our own features)</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Apple frameworks</td>
+          <td>Core ML, Vision, AVFoundation, PhotosUI</td>
+          <td>Apple SDK (provided with iOS)</td>
+          <td>—</td>
+        </tr>
+      </table>
+
+      <h3>TrackNetV3 attribution</h3>
+      <p class="lic">
+        TrackNetV3: <em>Enhancing ShuttleCock Tracking with Augmentations and Trajectory Rectification</em>.<br>
+        Yu-Jou Chen and Yu-Shuen Wang, National Yang Ming Chiao Tung University (NYCU).<br>
+        Proceedings of the ACM Multimedia Asia (MMAsia), 2023.
+        Official source: <a href="https://github.com/qaz812345/TrackNetV3">github.com/qaz812345/TrackNetV3</a>.
+      </p>
+
+      <h2>Development-only tooling (not distributed)</h2>
+      <table>
+        <tr><th>Tool</th><th>License</th></tr>
+        <tr><td>PyTorch</td><td>BSD-3-Clause</td></tr>
+        <tr><td>OpenCV</td><td>Apache License 2.0</td></tr>
+        <tr><td>coremltools</td><td>BSD-3-Clause</td></tr>
+        <tr><td>ONNX Runtime</td><td>MIT License</td></tr>
+        <tr><td>NumPy / SciPy</td><td>BSD-3-Clause</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Apache License 2.0</h2>
+      <p>RTMO / MMPose are licensed under the Apache License, Version 2.0. Copyright © OpenMMLab. The full text is provided below.</p>
+      <details>
+        <summary>Show full Apache License 2.0</summary>
+        <pre>
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+   A copy of the full Apache License 2.0 is available at
+   http://www.apache.org/licenses/LICENSE-2.0.txt
+        </pre>
+      </details>
+      <p style="font-size:13px;color:var(--muted)">The complete license text (Sections 1–9 and the Appendix) is incorporated by reference from the official URL above, which is the authoritative copy.</p>
+    </div>
+  </div>
+
+  <div id="zh" class="hidden">
+    <div class="card">
+      <h2>App 内置组件</h2>
+      <p>所有 AI 模型均通过 Apple Core ML 在设备本地运行。我们衷心感谢以下开源项目。</p>
+      <table>
+        <tr><th>组件</th><th>用途</th><th>许可证</th><th>来源</th></tr>
+        <tr>
+          <td><strong>RTMO / MMPose</strong>（OpenMMLab）</td>
+          <td>实时多人姿态估计（已转换为 Core ML，权重在自有流程中重跑）</td>
+          <td>Apache License 2.0</td>
+          <td><a href="https://github.com/open-mmlab/mmpose">open-mmlab/mmpose</a></td>
+        </tr>
+        <tr>
+          <td><strong>TrackNetV3</strong></td>
+          <td>羽毛球检测 / 热力图追踪</td>
+          <td>以上游仓库为准（学术发布）</td>
+          <td><a href="https://github.com/qaz812345/TrackNetV3">qaz812345/TrackNetV3</a></td>
+        </tr>
+        <tr>
+          <td><strong>Fusion 动作分类模型</strong></td>
+          <td>动作分类（发球、杀球、高远、吊球等）</td>
+          <td>© Theo（自有，基于自有特征训练）</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Apple 系统框架</td>
+          <td>Core ML、Vision、AVFoundation、PhotosUI</td>
+          <td>Apple SDK（随 iOS 提供）</td>
+          <td>—</td>
+        </tr>
+      </table>
+
+      <h3>TrackNetV3 署名</h3>
+      <p class="lic">
+        TrackNetV3：《Enhancing ShuttleCock Tracking with Augmentations and Trajectory Rectification》<br>
+        作者：Yu-Jou Chen、Yu-Shuen Wang（台湾阳明交通大学 NYCU）。<br>
+        发表于 ACM Multimedia Asia（MMAsia）2023。
+        官方源码：<a href="https://github.com/qaz812345/TrackNetV3">github.com/qaz812345/TrackNetV3</a>。
+      </p>
+
+      <h2>仅开发期工具（不分发进 App）</h2>
+      <table>
+        <tr><th>工具</th><th>许可证</th></tr>
+        <tr><td>PyTorch</td><td>BSD-3-Clause</td></tr>
+        <tr><td>OpenCV</td><td>Apache License 2.0</td></tr>
+        <tr><td>coremltools</td><td>BSD-3-Clause</td></tr>
+        <tr><td>ONNX Runtime</td><td>MIT License</td></tr>
+        <tr><td>NumPy / SciPy</td><td>BSD-3-Clause</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Apache License 2.0</h2>
+      <p>RTMO / MMPose 基于 Apache License 2.0 发布，版权归 OpenMMLab 所有。完整许可证文本如下。</p>
+      <details>
+        <summary>展开查看完整 Apache License 2.0</summary>
+        <pre>
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+   完整 Apache License 2.0 文本（第 1–9 节及附录）见官方权威副本：
+   http://www.apache.org/licenses/LICENSE-2.0.txt
+        </pre>
+      </details>
+    </div>
+  </div>
+
+  <footer>© 2026 Theo · Badminton Analyzer</footer>
+</div>
+
+<script>
+  function setLang(l){
+    document.documentElement.lang=l;
+    document.getElementById('en').classList.toggle('hidden',l!=='en');
+    document.getElementById('zh').classList.toggle('hidden',l!=='zh');
+    document.querySelectorAll('[data-en]').forEach(e=>e.classList.toggle('hidden',l!=='en'));
+    document.querySelectorAll('[data-zh]').forEach(e=>e.classList.toggle('hidden',l!=='zh'));
+    document.getElementById('btn-en').classList.toggle('active',l==='en');
+    document.getElementById('btn-zh').classList.toggle('active',l==='zh');
+    try{localStorage.setItem('lang',l);}catch(e){}
+  }
+  (function(){var s=null;try{s=localStorage.getItem('lang');}catch(e){}
+    var hash=(location.hash||'').replace('#','');
+    var lang=(hash==='en'||hash==='zh')?hash:(s||(navigator.language&&navigator.language.toLowerCase().indexOf('zh')===0?'zh':'en'));setLang(lang);})();
+</script>
+</body>
+</html>
