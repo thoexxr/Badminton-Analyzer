@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BadmintonAnalyzer · 上线首周限时免费</title>
+<meta name="description" content="AI 羽毛球动作分析 App，上传比赛或训练视频，自动生成逐帧骨骼追踪、球路轨迹与击球标注。上线首周限时免费下载！">
+<style>
+  :root {
+    --green-deep: #0b3d2e;
+    --green: #0f5c40;
+    --green-soft: #e6f4ee;
+    --lime: #c8f04a;
+    --lime-dark: #a8d628;
+    --ink: #0e1f18;
+    --ink-soft: #4a5f56;
+    --white: #ffffff;
+    --card-shadow: 0 12px 40px rgba(11, 61, 46, .10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ---------- 顶部横幅 ---------- */
+  .promo-bar {
+    background: linear-gradient(90deg, var(--green-deep), var(--green));
+    color: var(--lime);
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .5px;
+    padding: 10px 16px;
+  }
+
+  /* ---------- 导航 ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1120px; margin: 0 auto; padding: 18px 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+  .brand img { width: 44px; height: 44px; border-radius: 10px; box-shadow: 0 4px 14px rgba(11,61,46,.18); }
+  nav .nav-cta {
+    background: var(--green); color: var(--white);
+    padding: 10px 22px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    transition: transform .2s, box-shadow .2s;
+  }
+  nav .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,92,64,.35); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: linear-gradient(160deg, #f2fbf6 0%, #e6f4ee 60%, #dff0e6 100%);
+    overflow: hidden;
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(2px);
+  }
+  .hero::before {
+    width: 420px; height: 420px; right: -120px; top: -140px;
+    background: radial-gradient(circle at 30% 30%, rgba(200,240,74,.45), rgba(200,240,74,0) 70%);
+  }
+  .hero::after {
+    width: 520px; height: 520px; left: -180px; bottom: -240px;
+    background: radial-gradient(circle at 50% 50%, rgba(15,92,64,.14), rgba(15,92,64,0) 70%);
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: 1120px; margin: 0 auto; padding: 64px 24px 0;
+    display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-deep); color: var(--lime);
+    padding: 8px 18px; border-radius: 999px;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(11,61,46,.25);
+  }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .4; transform: scale(.7);} }
+  h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.15; font-weight: 800; letter-spacing: -1px;
+    margin-bottom: 18px;
+  }
+  h1 .hl {
+    background: linear-gradient(90deg, var(--green), #2f9e6e);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.sub {
+    font-size: 18px; color: var(--ink-soft); max-width: 480px; margin-bottom: 28px;
+  }
+  .price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
+  .price-now { font-size: 40px; font-weight: 800; color: var(--green-deep); }
+  .price-now small { font-size: 16px; font-weight: 600; }
+  .price-old { font-size: 20px; color: #9ab0a6; text-decoration: line-through; }
+  .price-tag {
+    background: #ff5a3c; color: #fff; font-size: 13px; font-weight: 700;
+    padding: 4px 12px; border-radius: 999px; letter-spacing: .5px;
+  }
+
+  /* App Store 按钮 */
+  .dl-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 30px; }
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--ink); color: var(--white);
+    padding: 14px 26px; border-radius: 14px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .dl-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,.25); }
+  .dl-btn svg { width: 26px; height: 26px; fill: var(--white); }
+  .dl-btn .t1 { font-size: 12px; opacity: .8; display: block; line-height: 1.2; }
+  .dl-btn .t2 { font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .dl-note { font-size: 13px; color: var(--ink-soft); max-width: 200px; }
+
+  /* 倒计时 */
+  .countdown { display: flex; gap: 10px; align-items: center; }
+  .cd-box {
+    background: var(--white); border-radius: 12px; padding: 10px 0;
+    width: 64px; text-align: center; box-shadow: var(--card-shadow);
+  }
+  .cd-box b { display: block; font-size: 24px; font-weight: 800; color: var(--green-deep); font-variant-numeric: tabular-nums; }
+  .cd-box span { font-size: 11px; color: var(--ink-soft); }
+  .cd-label { font-size: 13px; color: var(--ink-soft); margin-left: 6px; width: auto; padding: 0 10px; background: none; box-shadow: none; }
+
+  /* 手机预览 */
+  .phone-wrap { position: relative; display: flex; justify-content: center; }
+  .phone {
+    width: 300px; border-radius: 42px;
+    background: #111; padding: 10px;
+    box-shadow: 0 30px 70px rgba(11,61,46,.35);
+    transform: rotate(3deg);
+    transition: transform .4s;
+  }
+  .phone:hover { transform: rotate(0deg) translateY(-6px); }
+  .phone img { border-radius: 34px; }
+  .float-chip {
+    position: absolute; background: var(--white); border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(11,61,46,.18); padding: 10px 16px;
+    font-size: 13px; font-weight: 700; color: var(--green-deep);
+    display: flex; align-items: center; gap: 8px;
+    animation: floaty 3.6s ease-in-out infinite;
+  }
+  .float-chip .em { font-size: 18px; }
+  .chip-1 { top: 8%; left: -4%; animation-delay: 0s; }
+  .chip-2 { bottom: 16%; right: -6%; animation-delay: 1.4s; }
+  @keyframes floaty { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-12px);} }
+
+  /* ---------- 数据条 ---------- */
+  .stats { max-width: 1120px; margin: -40px auto 0; padding: 0 24px; position: relative; z-index: 2; }
+  .stats-grid {
+    background: var(--white); border-radius: 20px; box-shadow: var(--card-shadow);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    padding: 26px 10px;
+  }
+  .stat { text-align: center; padding: 6px 10px; }
+  .stat b { display: block; font-size: 26px; font-weight: 800; color: var(--green); }
+  .stat span { font-size: 13px; color: var(--ink-soft); }
+
+  /* ---------- 通用 section ---------- */
+  section.block { max-width: 1120px; margin: 0 auto; padding: 88px 24px 0; }
+  .sec-head { text-align: center; margin-bottom: 48px; }
+  .sec-head .kicker {
+    display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    color: var(--lime-dark); background: var(--green-deep);
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 14px;
+  }
+  .sec-head h2 { font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -.5px; }
+  .sec-head p { color: var(--ink-soft); margin-top: 10px; font-size: 16px; }
+
+  /* 功能卡片 */
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feat {
+    background: var(--green-soft); border-radius: 20px; padding: 30px 26px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .feat:hover { transform: translateY(-6px); box-shadow: var(--card-shadow); }
+  .feat .icon {
+    width: 52px; height: 52px; border-radius: 14px; background: var(--green-deep);
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    margin-bottom: 18px;
+  }
+  .feat h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .feat p { font-size: 14px; color: var(--ink-soft); }
+
+  /* 三步流程 */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; }
+  .step {
+    position: relative; background: var(--white); border: 2px solid var(--green-soft);
+    border-radius: 20px; padding: 34px 26px 28px;
+  }
+  .step::before {
+    counter-increment: step; content: "0" counter(step);
+    position: absolute; top: -18px; left: 24px;
+    background: var(--lime); color: var(--green-deep);
+    font-weight: 800; font-size: 15px; padding: 6px 14px; border-radius: 999px;
+  }
+  .step h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--ink-soft); }
+
+  /* 截图墙 */
+  .shots { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+  .shot {
+    width: 240px; border-radius: 28px; overflow: hidden;
+    box-shadow: 0 18px 44px rgba(11,61,46,.16);
+    transition: transform .3s;
+  }
+  .shot:hover { transform: translateY(-8px) scale(1.02); }
+  .shot:nth-child(2) { transform: translateY(22px); }
+  .shot:nth-child(2):hover { transform: translateY(14px) scale(1.02); }
+
+  /* FAQ */
+  .faq { max-width: 720px; margin: 0 auto; }
+  details {
+    background: var(--green-soft); border-radius: 16px; padding: 20px 24px; margin-bottom: 14px;
+  }
+  summary { font-weight: 700; cursor: pointer; font-size: 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  summary::after { content: "+"; font-size: 22px; color: var(--green); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 12px; color: var(--ink-soft); font-size: 14px; }
+
+  /* ---------- 底部 CTA ---------- */
+  .cta-final {
+    margin: 96px auto 0; max-width: 1120px; padding: 0 24px 96px;
+  }
+  .cta-card {
+    background: linear-gradient(135deg, var(--green-deep), var(--green) 70%, #157a54);
+    border-radius: 32px; text-align: center; color: var(--white);
+    padding: 70px 32px; position: relative; overflow: hidden;
+  }
+  .cta-card::before {
+    content: "🏸"; position: absolute; font-size: 160px; opacity: .08;
+    right: -20px; bottom: -40px; transform: rotate(-20deg);
+  }
+  .cta-card h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; margin-bottom: 12px; }
+  .cta-card p { opacity: .85; margin-bottom: 30px; font-size: 17px; }
+  .cta-card .dl-btn { background: var(--lime); color: var(--green-deep); }
+  .cta-card .dl-btn svg { fill: var(--green-deep); }
+  .cta-card .dl-btn:hover { box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+
+  footer { background: #08281e; color: #8fb3a4; text-align: center; padding: 32px 24px; font-size: 13px; }
+  footer a { color: #c8f04a; }
+  .foot-links { margin-bottom: 10px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; padding-top: 48px; text-align: center; }
+    .hero p.sub { margin-left: auto; margin-right: auto; }
+    .price-row, .dl-row, .countdown { justify-content: center; }
+    .phone-wrap { margin-top: 40px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 18px 0; }
+    .feat-grid, .steps { grid-template-columns: 1fr; }
+    .shot:nth-child(2) { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="promo-bar">🎉 上线首周福利 · 限时免费下载，活动截止后恢复原价</div>
+
+<nav>
+  <div class="brand">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/24/07/3b/24073b19-3224-68e2-c7cf-b5925df52144/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/460x0w.png" alt="BadmintonAnalyzer 图标">
+    BadmintonAnalyzer
+  </div>
+  <a class="nav-cta" href="https://apps.apple.com/cn/app/badmintonanalyzer/id6824501137" target="_blank" rel="noopener">免费下载</a>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="badge"><span class="dot"></span>上新活动 · 首周限时免费</div>
+      <h1>你的<span class="hl"> AI 羽毛球教练</span><br>就在口袋里</h1>
+      <p class="sub">上传一段比赛或训练视频，AI 自动逐帧解析：骨骼追踪、球路轨迹、击球动作标注与数据统计 —— 全部在你的 iPhone 上完成。</p>
+      <div class="price-row">
+        <span class="price-now">¥0<small> 首周免费</small></span>
+        <span class="price-old">下载内购原价</span>
+        <span class="price-tag">限时特惠</span>
+      </div>
+      <div class="dl-row">
+        <a class="dl-btn" href="https://apps.apple.com/cn/app/badmintonanalyzer/id6824501137" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.03-2.89 2.36-4.28 2.47-4.35-1.35-1.97-3.44-2.24-4.18-2.27-1.78-.18-3.47 1.05-4.37 1.05-.9 0-2.29-1.02-3.77-1-1.94.03-3.72 1.13-4.72 2.86-2.01 3.49-.51 8.66 1.45 11.49.96 1.39 2.1 2.94 3.6 2.89 1.45-.06 1.99-.93 3.74-.93s2.24.93 3.77.9c1.56-.03 2.54-1.41 3.49-2.81 1.1-1.61 1.55-3.17 1.58-3.25-.03-.02-3.03-1.16-3.06-4.58zM14.16 4.03c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.34 1.72-.73.85-1.37 2.2-1.2 3.5 1.27.1 2.57-.64 3.36-1.6z"/></svg>
+          <span><span class="t1">Download on the</span><span class="t2">App Store</span></span>
+        </a>
+        <span class="dl-note">仅需 iOS 17.0+ · 49.6 MB · 免注册 · 完全离线可用</span>
+      </div>
+      <div class="countdown">
+        <div class="cd-box"><b id="cd-d">--</b><span>天</span></div>
+        <div class="cd-box"><b id="cd-h">--</b><span>时</span></div>
+        <div class="cd-box"><b id="cd-m">--</b><span>分</span></div>
+        <div class="cd-box"><b id="cd-s">--</b><span>秒</span></div>
+        <div class="cd-box cd-label">后恢复原价</div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/09/a4/25/09a42530-cd5a-34cb-144f-4a0eb6ef1d44/_U5fae_U4fe1_U56fe_U7247_20261019204000_66.jpg/600x1334bb.jpg" alt="BadmintonAnalyzer 界面预览">
+      </div>
+      <div class="float-chip chip-1"><span class="em">🎯</span>杀球 +12</div>
+      <div class="float-chip chip-2"><span class="em">🏃</span>17 点骨骼追踪</div>
+    </div>
+  </div>
+</header>
+
+<!-- 数据条 -->
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat"><b>17 点</b><span>人体骨骼追踪</span></div>
+    <div class="stat"><b>7 种</b><span>击球动作自动识别</span></div>
+    <div class="stat"><b>100%</b><span>端侧 AI · 视频不出手机</span></div>
+    <div class="stat"><b>0 元</b><span>首周限时免费</span></div>
+  </div>
+</div>
+
+<!-- 功能 -->
+<section class="block">
+  <div class="sec-head">
+    <span class="kicker">核心功能</span>
+    <h2>一段视频，看清每一次挥拍</h2>
+    <p>像口袋教练一样，把你的回合拆解到每一帧</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="icon">🦴</div>
+      <h3>17 点骨骼追踪</h3>
+      <p>为场上每一位球员实时标注人体骨架，动作细节一目了然。</p>
+    </div>
+    <div class="feat">
+      <div class="icon">🏸</div>
+      <h3>球飞行轨迹</h3>
+      <p>自动追踪羽毛球移动轨迹，回看每一拍的线路与落点。</p>
+    </div>
+    <div class="feat">
+      <div class="icon">🏷️</div>
+      <h3>击球动作自动标注</h3>
+      <p>发球、杀球、高远球、吊球、挑球、平抽、网前球 —— 出手瞬间自动打标签。</p>
+    </div>
+    <div class="feat">
+      <div class="icon">📊</div>
+      <h3>逐人统计 + 时间线</h3>
+      <p>每位球员的动作计数与完整动作时间线，量化你的训练。</p>
+    </div>
+    <div class="feat">
+      <div class="icon">🔒</div>
+      <h3>隐私优先</h3>
+      <p>基于 Core ML 与 Apple 神经引擎全本地运行，视频不上传、无广告、无追踪。</p>
+    </div>
+    <div class="feat">
+      <div class="icon">🎬</div>
+      <h3>一键导出标注视频</h3>
+      <p>骨架、球路、标签与计时全部叠加到视频上，一键保存，方便复盘与教学。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 使用步骤 -->
+<section class="block">
+  <div class="sec-head">
+    <span class="kicker">如何使用</span>
+    <h2>三步开启 AI 复盘</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <h3>选择视频</h3>
+      <p>从相册导入比赛或训练片段，也可以直接用内置演示视频体验。</p>
+    </div>
+    <div class="step">
+      <h3>一键分析</h3>
+      <p>AI 在你的设备上逐帧运行，30 秒视频通常 1–2 分钟即可完成解析。</p>
+    </div>
+    <div class="step">
+      <h3>查看与保存</h3>
+      <p>观看标注视频，回顾每人数据与动作时间线，一键保存到相册。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 截图 -->
+<section class="block">
+  <div class="sec-head">
+    <span class="kicker">应用预览</span>
+    <h2>看看它长什么样</h2>
+  </div>
+  <div class="shots">
+    <div class="shot"><img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/17/a4/f5/17a4f577-f336-49f1-e875-075e0b7372fe/_U5fae_U4fe1_U56fe_U7247_2026-10-19_203950_405.jpg/600x1334bb.jpg" alt="应用截图 1"></div>
+    <div class="shot"><img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/09/a4/25/09a42530-cd5a-34cb-144f-4a0eb6ef1d44/_U5fae_U4fe1_U56fe_U7247_20261019204000_66.jpg/600x1334bb.jpg" alt="应用截图 2"></div>
+    <div class="shot"><img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/3b/05/f5/3b05f5c7-022b-aba0-1cac-c85507c4a889/_U5fae_U4fe1_U56fe_U7247_20261019204048_70.jpg/600x1334bb.jpg" alt="应用截图 3"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="block">
+  <div class="sec-head">
+    <span class="kicker">常见问题</span>
+    <h2>你想知道的都在这里</h2>
+  </div>
+  <div class="faq">
+    <details open>
+      <summary>「首周免费」是什么意思？</summary>
+      <p>为庆祝 BadmintonAnalyzer 正式上线，App 上线第一周限时免费下载。活动期结束后价格将恢复，建议尽快下载锁定福利。</p>
+    </details>
+    <details>
+      <summary>支持哪些设备？</summary>
+      <p>需要 iPhone 且系统为 iOS 17.0 或更高版本。AI 全部在本机运行，无需联网。</p>
+    </details>
+    <details>
+      <summary>我的视频会被上传吗？</summary>
+      <p>不会。所有分析均通过 Core ML 与 Apple 神经引擎在本地完成，视频不会离开你的设备，无账号、无广告、无追踪。</p>
+    </details>
+    <details>
+      <summary>支持识别哪些击球动作？</summary>
+      <p>目前支持 7 类动作的自动标注：发球、杀球、高远球、吊球、挑球、平抽与网前球，并给出逐人统计与动作时间线。</p>
+    </details>
+    <details>
+      <summary>界面是中文的吗？</summary>
+      <p>App 界面完全支持中英双语，跟随应用内语言设置切换。</p>
+    </details>
+  </div>
+</section>
+
+<!-- 底部 CTA -->
+<div class="cta-final">
+  <div class="cta-card">
+    <h2>首周免费，别错过</h2>
+    <p>现在下载，把 AI 羽毛球教练装进口袋</p>
+    <a class="dl-btn" href="https://apps.apple.com/cn/app/badmintonanalyzer/id6824501137" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.03-2.89 2.36-4.28 2.47-4.35-1.35-1.97-3.44-2.24-4.18-2.27-1.78-.18-3.47 1.05-4.37 1.05-.9 0-2.29-1.02-3.77-1-1.94.03-3.72 1.13-4.72 2.86-2.01 3.49-.51 8.66 1.45 11.49.96 1.39 2.1 2.94 3.6 2.89 1.45-.06 1.99-.93 3.74-.93s2.24.93 3.77.9c1.56-.03 2.54-1.41 3.49-2.81 1.1-1.61 1.55-3.17 1.58-3.25-.03-.02-3.03-1.16-3.06-4.58zM14.16 4.03c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.34 1.72-.73.85-1.37 2.2-1.2 3.5 1.27.1 2.57-.64 3.36-1.6z"/></svg>
+      <span><span class="t1">Download on the</span><span class="t2">App Store</span></span>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-links">
+    <a href="https://apps.apple.com/cn/app/badmintonanalyzer/id6824501137" target="_blank" rel="noopener">App Store</a>
+    <a href="https://github.com/thoexxr/Badminton-Analyzer" target="_blank" rel="noopener">项目主页</a>
+  </div>
+  <div>BadmintonAnalyzer © 星然 许 · Fusion classified model © Xingran Xu · RTMO/MMPose © OpenMMLab (Apache License 2.0)</div>
+</footer>
+
+<script>
+  // 活动截止时间：上线后第 7 天（可按实际活动日期修改此处）
+  var CAMPAIGN_END = new Date('2026-10-30T23:59:59+08:00');
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function tick(){
+    var diff = CAMPAIGN_END - new Date();
+    if (diff < 0) diff = 0;
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor(diff % 86400000 / 3600000);
+    var m = Math.floor(diff % 3600000 / 60000);
+    var s = Math.floor(diff % 60000 / 1000);
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+  tick(); setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
